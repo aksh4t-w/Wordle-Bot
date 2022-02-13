@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Bot</title>
+  <!-- <script type="text/javascript" src="index.js" ></script> -->
+  <script>
+    async function getWords(){
+      const charsPresent = document.getElementById("charsPresent").value
+      const positions = document.getElementById("positions").value
+      const charsNotPresent = document.getElementById("charsNotPresent").value
+
+      // const wbc = getWordsByChars(charsPresent, charsNotPresent);
+      // const wbcp = getWordsByCharPositions(positions, charsNotPresent);
+      // return {wordsByChars: wbc, wordsByCharPositions: wbcp}
+
+      fetch('http://localhost:3000/getWords', {
+        method: 'POST',
+        body: JSON.stringify({ charsPresent, positions, charsNotPresent}),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          document.getElementsByClassName("wordsbychar")[0].innerHTML += data.wordsByChars.join(", ")
+          document.getElementsByClassName("wordsbypos")[0].innerHTML += data.wordsByPos.join(", ")
+        })
+        .catch(err => console.log(err));
+
+    }
+  </script>
+  <style>
+    .possibleWords {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-evenly;
+    }
+
+    .wordsbychar {
+      /* flex: 0.5; */
+      width: 40%;
+    }
+
+    .wordsbypos{
+      /* flex: 0.5; */
+      width: 40%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wordle Bot</h1>
+  <div class="container">
+    <label for="charsPresent">Characters present: </label>
+    <input type="text" id="charsPresent">
+    <br>
+    <label for="positions">Characters at positions: </label>
+    <input type="text" id="positions">
+    <br>
+    <label for="charsNotPresent">Characters not present: </label>
+    <input type="text" id="charsNotPresent"> 
+    <br>
+    <button onclick="getWords()">Get words!</button>
+  </div>
+  <div class="possibleWords">
+    <div class="wordsbychar">
+      <h3>Words by characters</h3>
+    </div>
+    <div class="wordsbypos">
+      <h3>Words by character positions</h3>
+    </div>
+  </div>
+</body>
+</html>
